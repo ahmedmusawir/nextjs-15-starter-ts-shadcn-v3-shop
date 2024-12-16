@@ -1,8 +1,7 @@
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
-// import { products } from "@/demo-data/data";
+import { products } from "@/demo-data/data";
 import { CartDetail, CartItem } from "@/types/cart";
-import { fetchAllProducts } from "@/services/productServices";
 
 // Type for the Zustand store
 interface CartStore {
@@ -20,11 +19,6 @@ interface CartStore {
   cartDetails: () => CartDetail[]; // Get detailed cart items with product info
   subtotal: () => number; // Calculate the subtotal of all items in the cart
 }
-
-// Fetching the first 12 products
-const productsResponse = await fetchAllProducts(100, null);
-console.log("Fetched Products in useCartStore:", productsResponse.items);
-const products = productsResponse.items;
 
 // Define the Zustand store with persist middleware
 export const useCartStore = create<CartStore>()(
@@ -98,7 +92,7 @@ export const useCartStore = create<CartStore>()(
       cartDetails: () => {
         const cartItems = get().cartItems || [];
         return cartItems.map((cartItem) => {
-          const product = products.find((p) => p.databaseId === cartItem.id);
+          const product = products.find((p) => p.id === cartItem.id);
           if (!product)
             throw new Error(`Product with id ${cartItem.id} not found`);
           return { ...cartItem, productDetails: product };
@@ -110,9 +104,7 @@ export const useCartStore = create<CartStore>()(
         return parseFloat(
           cartItems
             .reduce((acc, cartItem) => {
-              const product = products.find(
-                (p) => p.databaseId === cartItem.id
-              );
+              const product = products.find((p) => p.id === cartItem.id);
               if (!product) return acc;
               return (
                 acc +

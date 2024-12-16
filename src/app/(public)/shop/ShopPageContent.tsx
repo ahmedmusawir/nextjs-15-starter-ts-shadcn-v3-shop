@@ -1,30 +1,16 @@
-"use client";
-
 import Head from "next/head";
-import Link from "next/link";
 import Page from "@/components/common/Page";
 import Row from "@/components/common/Row";
 import { useProductStore } from "@/store/useProductStore";
-import { useCartStore } from "@/store/useCartStore";
+import ProductListItem from "@/components/shop/ProductListItem";
+import { fetchAllProducts } from "@/services/productServices";
 
-const ShopPageContent = () => {
-  const products = useProductStore((state) => state.products);
-  const { increaseCartQuantity, setIsCartOpen, removeFromCart, cartItems } =
-    useCartStore();
-
-  const isProductInCart = (productId: number) => {
-    return cartItems.some((item) => item.id === productId);
-  };
-
-  const handleAddToCart = (id: number) => {
-    console.log("Prod ID: (ShopPageContent)", id);
-    increaseCartQuantity(id);
-    setIsCartOpen(true);
-  };
-  const handleRemoveCartItem = (id: number) => {
-    removeFromCart(id);
-    setIsCartOpen(true);
-  };
+const ShopPageContent = async () => {
+  // const products = useProductStore((state) => state.products);
+  // Fetching the first 12 products
+  const productsResponse = await fetchAllProducts(12, null);
+  console.log("Fetched Products Response:", productsResponse.items);
+  const products = productsResponse.items;
 
   return (
     <>
@@ -53,48 +39,7 @@ const ShopPageContent = () => {
 
             <div className="mt-6 grid grid-cols-2 gap-x-4 gap-y-10 sm:gap-x-6 md:grid-cols-4 md:gap-y-0 lg:gap-x-8">
               {products.map((product) => (
-                <div key={product.id} className="group relative my-5">
-                  <Link href={`/shop/${product.id}`}>
-                    <div className="h-56 w-full overflow-hidden rounded-md bg-gray-200 group-hover:opacity-75 lg:h-72 xl:h-80">
-                      <img
-                        src={product.imageSrc}
-                        alt={product.imageAlt}
-                        className="h-full w-full object-cover object-center"
-                      />
-                    </div>
-                  </Link>
-                  <section className="">
-                    <h3 className="mt-4 text-sm text-gray-700">
-                      {/* <span className="absolute inset-0" /> THIS MAKES THE WHOLE DIV CLICKABLE ... TROUBLE! */}
-                      {product.name}
-                    </h3>
-                    <p className="mt-1 text-sm text-gray-500">
-                      {product.color}
-                    </p>
-                    <p className="mt-1 text-sm font-medium text-gray-900">
-                      {product.price}
-                    </p>
-
-                    {!isProductInCart(product.id) && (
-                      <button
-                        type="button"
-                        className="rounded-full bg-indigo-600 px-2.5 py-1 text-xs font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 float-right xl:mb-10"
-                        onClick={() => handleAddToCart(product.id)}
-                      >
-                        Add To Cart
-                      </button>
-                    )}
-                    {isProductInCart(product.id) && (
-                      <button
-                        type="button"
-                        className="rounded-full bg-red-600 px-2.5 py-1 text-xs font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 float-right"
-                        onClick={() => handleRemoveCartItem(product.id)}
-                      >
-                        Remove Item
-                      </button>
-                    )}
-                  </section>
-                </div>
+                <ProductListItem product={product} key={product.id} />
               ))}
             </div>
           </div>
