@@ -41,3 +41,34 @@ export const fetchAllProducts = async (
     endCursor: result?.data?.products?.pageInfo?.endCursor || null,
   };
 };
+
+// --------------------------- END OF fetchAllProducts ------------------------------
+
+import { GRAPHQL_QUERY_GET_PRODUCT_BY_ID } from "@/graphql/queries/products/getProductsById";
+
+export const fetchProductById = async (id: number) => {
+  const response = await fetch(WORDPRESS_API_URL as string, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      query: GRAPHQL_QUERY_GET_PRODUCT_BY_ID,
+      variables: { id },
+    }),
+  });
+
+  if (!response.ok) {
+    throw new Error(
+      `Failed to fetch product with ID ${id}: ${response.statusText}`
+    );
+  }
+
+  const result = await response.json();
+
+  if (result.errors) {
+    throw new Error(`GraphQL Error: ${result.errors[0].message}`);
+  }
+
+  return result.data?.product || null;
+};

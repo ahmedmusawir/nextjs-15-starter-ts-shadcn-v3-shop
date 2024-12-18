@@ -152,8 +152,8 @@ const CartPageContent = () => {
                   <li key={product.id} className="flex py-6 sm:py-10">
                     <div className="shrink-0">
                       <img
-                        alt={product.productDetails.imageAlt}
-                        src={product.productDetails.imageSrc}
+                        alt={product.productDetails.name}
+                        src={product.productDetails.image.sourceUrl}
                         className="size-24 rounded-md object-cover sm:size-48"
                       />
                     </div>
@@ -173,7 +173,9 @@ const CartPageContent = () => {
                           </div>
                           <div className="mt-1 flex text-sm">
                             <p className="text-gray-500">
-                              {product.productDetails.color}
+                              {product.productDetails.productCategories.nodes.map(
+                                (cat) => cat.name
+                              )}
                             </p>
                           </div>
                           <p className="mt-1 text-sm font-medium text-gray-900">
@@ -225,7 +227,7 @@ const CartPageContent = () => {
                       </div>
 
                       <p className="mt-4 flex space-x-2 text-sm text-gray-700">
-                        {product.productDetails.inStock ? (
+                        {product.productDetails.id ? (
                           <CheckIcon
                             aria-hidden="true"
                             className="size-5 shrink-0 text-green-500"
@@ -238,9 +240,9 @@ const CartPageContent = () => {
                         )}
 
                         <span>
-                          {product.productDetails.inStock
+                          {product.productDetails.id
                             ? "In stock"
-                            : `Ships in ${product.productDetails.leadTime}`}
+                            : `Ships in ${product.productDetails.sku}`}
                         </span>
                       </p>
                     </div>

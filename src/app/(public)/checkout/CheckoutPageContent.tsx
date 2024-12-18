@@ -469,8 +469,8 @@ const CheckoutPageContent = () => {
                       <li key={product.id} className="flex px-4 py-6 sm:px-6">
                         <div className="shrink-0">
                           <img
-                            alt={product.productDetails.imageAlt}
-                            src={product.productDetails.imageSrc}
+                            alt={product.productDetails.name}
+                            src={product.productDetails.image.sourceUrl}
                             className="w-20 rounded-md"
                           />
                         </div>
@@ -481,7 +481,9 @@ const CheckoutPageContent = () => {
                                 {product.productDetails.name}
                               </h4>
                               <p className="mt-1 text-sm text-gray-500">
-                                {product.productDetails.color}
+                                {product.productDetails.productCategories.nodes.map(
+                                  (cat) => cat.name
+                                )}
                               </p>
                             </div>
                             <div className="ml-4 flow-root shrink-0">

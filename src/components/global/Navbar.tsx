@@ -22,7 +22,7 @@ const Navbar = () => {
   const pathname = usePathname();
   // Access Zustand store
   const { cartDetails, isLoading } = useCartStore();
-  const cartItemCount = cartDetails().length;
+  const cartItemCount = cartDetails.length;
   // console.log("Cart Item Count [Navbar]", cartItemCount);
 
   interface NavLinkProps {

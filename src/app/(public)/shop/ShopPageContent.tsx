@@ -1,12 +1,10 @@
 import Head from "next/head";
 import Page from "@/components/common/Page";
 import Row from "@/components/common/Row";
-import { useProductStore } from "@/store/useProductStore";
 import ProductListItem from "@/components/shop/ProductListItem";
 import { fetchAllProducts } from "@/services/productServices";
 
 const ShopPageContent = async () => {
-  // const products = useProductStore((state) => state.products);
   // Fetching the first 12 products
   const productsResponse = await fetchAllProducts(12, null);
   console.log("Fetched Products Response:", productsResponse.items);

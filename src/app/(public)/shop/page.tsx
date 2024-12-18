@@ -1,11 +1,10 @@
-import { fetchAllProducts } from "@/services/productServices";
+import { fetchProductById } from "@/services/productServices";
 import ShopPageContent from "./ShopPageContent";
 
 const Shop = async () => {
-  // Fetching the first 12 products (you can adjust the numbers for testing)
-  // const productsResponse = await fetchAllProducts(12, null);
-  // console.log("Fetched Products Response:", productsResponse.items);
-
+  // JUST FOR TESTING ... PLZ REMOVE THE FOLLOWING
+  // const response = await fetchProductById(3733);
+  // console.log("Product by id [shop/page.tsx]", response);
   return <ShopPageContent />;
 };
 
