@@ -12,41 +12,38 @@ Returns:
 export const GRAPHQL_QUERY_GET_ALL_PUBLISHED_PRODUCTS = `
 query GetAllPublishedProducts($first: Int!, $after: String) {
   products(where: { status: "publish" }, first: $first, after: $after) {
-    edges {
-      cursor
-      node {
-        id
-        databaseId
-        name
-        slug
-        sku
-        ... on SimpleProduct {
-          price
-          productCategories {
-            nodes {
-              name
-            }
-          }
-          image {
-            sourceUrl
-          }
-        }
-        ... on VariableProduct {
-          price
-          productCategories {
-            nodes {
-              name
-            }
-          }
-          image {
-            sourceUrl
-          }
-        }
-      }
-    }
     pageInfo {
       hasNextPage
       endCursor
+    }
+    nodes {
+      id
+      databaseId
+      name
+      slug
+      sku
+      ... on SimpleProduct {
+        price
+        productCategories {
+          nodes {
+            name
+          }
+        }
+        image {
+          sourceUrl
+        }
+      }
+      ... on VariableProduct {
+        price
+        productCategories {
+          nodes {
+            name
+          }
+        }
+        image {
+          sourceUrl
+        }
+      }
     }
   }
 }`;

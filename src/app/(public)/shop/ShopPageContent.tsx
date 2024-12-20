@@ -1,14 +1,26 @@
 import Head from "next/head";
 import Page from "@/components/common/Page";
 import Row from "@/components/common/Row";
-import ProductListItem from "@/components/shop/ProductListItem";
-import { fetchAllProducts } from "@/services/productServices";
+import {
+  fetchAllProducts,
+  fetchTotalProductCount,
+} from "@/services/productServices";
+import ProductList from "@/components/shop/ProductList";
+import NumberedPagination from "@/components/common/NumberedPagination";
+import { useNumberedPaginationStore } from "@/store/useNumberedPaginationStore";
+import { useProductStore } from "@/store/useProductStore";
 
 const ShopPageContent = async () => {
   // Fetching the first 12 products
-  const productsResponse = await fetchAllProducts(12, null);
-  console.log("Fetched Products Response:", productsResponse.items);
+  const productsResponse = await fetchAllProducts(8, null);
+  // console.log("Fetched Products Response:", productsResponse.items);
   const products = productsResponse.items;
+
+  const totalProducts = await fetchTotalProductCount(); // Fetch total product count
+  // console.log("Total Product Count [ShopPageContent]", totalProducts);
+
+  // useNumberedPaginationStore.getState().setTotalProducts(totalProducts); // Set total products in store
+  // useProductStore.getState().setProducts(productsResponse.items); // Initialize products
 
   return (
     <>
@@ -36,10 +48,12 @@ const ShopPageContent = async () => {
             </div>
 
             <div className="mt-6 grid grid-cols-2 gap-x-4 gap-y-10 sm:gap-x-6 md:grid-cols-4 md:gap-y-0 lg:gap-x-8">
-              {products.map((product) => (
-                <ProductListItem product={product} key={product.id} />
-              ))}
+              <ProductList
+                initialProducts={products}
+                totalProducts={totalProducts}
+              />
             </div>
+            <NumberedPagination />
           </div>
         </div>
       </Page>

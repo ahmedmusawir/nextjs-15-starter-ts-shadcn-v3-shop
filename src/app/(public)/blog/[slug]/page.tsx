@@ -20,7 +20,7 @@ const SinglePost = async ({
   const { slug } = await params;
   const data = await fetchSinglePostBySlug(slug);
   const post = data.post;
-  console.log("Single Post [/blog/[slug]/page.tsx]", post);
+  // console.log("Single Post [/blog/[slug]/page.tsx]", post);
 
   // Handle 404 with ISR
   if (!post) {

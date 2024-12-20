@@ -101,7 +101,7 @@ const CartPageContent = () => {
   // Redirect to shop if cart is empty
   const handleRemoveCartItem = (id: number) => {
     removeFromCart(id);
-    console.log("Cart Item Count: [CartPageContent]", cartDetails.length);
+    // console.log("Cart Item Count: [CartPageContent]", cartDetails.length);
     if (cartDetails().length === 0) {
       router.push("/shop");
     }

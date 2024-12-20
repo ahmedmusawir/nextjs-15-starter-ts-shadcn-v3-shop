@@ -13,12 +13,14 @@ const ProductListItem = ({ product }: Props) => {
   const { increaseCartQuantity, setIsCartOpen, removeFromCart, cartItems } =
     useCartStore();
 
+  // console.log("Cart Items: [PRODUCT LIST ITEM]", cartItems);
+
   const isProductInCart = (productId: number) => {
     return cartItems.some((item) => item.id === productId);
   };
 
   const handleAddToCart = (id: number) => {
-    console.log("Prod ID: (ShopPageContent)", id);
+    // console.log("Prod ID: (ShopPageContent)", id);
     increaseCartQuantity(id);
     setIsCartOpen(true);
   };

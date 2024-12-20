@@ -11,18 +11,19 @@ export interface ProductCategory {
 }
 
 export interface Product {
-  id: string; // GraphQL uses strings for IDs
-  databaseId: number; // Internal numeric ID
+  id: string;
+  databaseId: number;
   name: string;
   slug: string;
-  sku: string | null; // SKU can be null
-  price: string; // Price range or single price as string
+  sku: string;
+  price: string;
   productCategories: {
-    nodes: ProductCategory[];
+    nodes: { name: string }[];
   };
   image: {
     sourceUrl: string;
   };
+  cursor: string; // Add this field
 }
 
 export interface ProductStore {

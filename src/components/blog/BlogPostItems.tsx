@@ -19,13 +19,13 @@ const BlogPostItems = ({ initialPosts, endCursor, hasNextPage }: Props) => {
 
   // Hydrate Zustand store AFTER the component mounts
   useEffect(() => {
-    console.log("Hydration Status Check Before Updating Store:", {
-      hasHydrated,
-      items: usePaginationStore.getState().items,
-    });
+    // console.log("Hydration Status Check Before Updating Store:", {
+    //   hasHydrated,
+    //   items: usePaginationStore.getState().items,
+    // });
 
     if (!hasHydrated && initialPosts.length > 0) {
-      console.log("Hydrating Zustand Store with Initial Posts:", initialPosts);
+      // console.log("Hydrating Zustand Store with Initial Posts:", initialPosts);
       usePaginationStore.setState((state) => {
         if (state.items.length === 0) {
           return {
@@ -36,7 +36,7 @@ const BlogPostItems = ({ initialPosts, endCursor, hasNextPage }: Props) => {
             hasHydrated: true, // Mark hydration complete
           };
         }
-        console.log("Skipped Setting Items: Zustand Store Already Updated");
+        // console.log("Skipped Setting Items: Zustand Store Already Updated");
         return state; // Prevent overwriting if items already exist
       });
     }

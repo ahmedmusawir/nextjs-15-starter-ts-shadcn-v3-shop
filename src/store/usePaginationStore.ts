@@ -35,11 +35,11 @@ export const usePaginationStore = create<PaginationStore<any>>()(
       markHydrated: () => set({ hasHydrated: true }),
 
       fetchNextPage: async (fetchFunction) => {
-        console.log("Fetching Next Page...");
-        console.log(
-          "Current State Before Fetch:",
-          usePaginationStore.getState()
-        );
+        // console.log("Fetching Next Page...");
+        // console.log(
+        //   "Current State Before Fetch:",
+        //   usePaginationStore.getState()
+        // );
         set({ isLoading: true });
 
         try {
@@ -47,7 +47,7 @@ export const usePaginationStore = create<PaginationStore<any>>()(
             usePaginationStore.getState().endCursor
           );
 
-          console.log("Fetched Data:", items);
+          // console.log("Fetched Data:", items);
 
           set((state) => ({
             items: [...state.items, ...items],
@@ -56,10 +56,10 @@ export const usePaginationStore = create<PaginationStore<any>>()(
             isLoading: false,
           }));
 
-          console.log(
-            "Updated State After Fetch:",
-            usePaginationStore.getState()
-          );
+          // console.log(
+          //   "Updated State After Fetch:",
+          //   usePaginationStore.getState()
+          // );
         } catch (error) {
           console.error("Error fetching next page:", error);
           set({ isLoading: false });
@@ -88,7 +88,7 @@ export const usePaginationStore = create<PaginationStore<any>>()(
       name: "pagination-store", // LocalStorage key
       storage: createJSONStorage(() => localStorage),
       partialize: (state) => {
-        console.log("Partializing State:", state.items);
+        // console.log("Partializing State:", state.items);
         return {
           items: state.items,
           endCursor: state.endCursor,
@@ -96,11 +96,11 @@ export const usePaginationStore = create<PaginationStore<any>>()(
         };
       },
       onRehydrateStorage: () => (state) => {
-        console.log(
-          "Hydration Triggered: Zustand Store",
-          state?.items || "No Items"
-        );
-        console.log("Rehydrated State:", state?.items); // Log state after hydration
+        // console.log(
+        //   "Hydration Triggered: Zustand Store",
+        //   state?.items || "No Items"
+        // );
+        // console.log("Rehydrated State:", state?.items); // Log state after hydration
         state?.setIsLoading(false); // Hydration is complete
       },
     }
