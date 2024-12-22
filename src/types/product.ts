@@ -23,7 +23,7 @@ export interface Product {
   image: {
     sourceUrl: string;
   };
-  cursor: string; // Add this field
+  cursor: string;
 }
 
 export interface ProductStore {

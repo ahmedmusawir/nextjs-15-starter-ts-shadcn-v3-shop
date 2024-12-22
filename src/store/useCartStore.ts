@@ -2,6 +2,7 @@ import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 import { useProductStore } from "@/store/useProductStore";
 import { CartDetail, CartItem } from "@/types/cart";
+import { Product } from "@/types/product";
 
 // Type for the Zustand store
 interface CartStore {
@@ -80,23 +81,32 @@ export const useCartStore = create<CartStore>()(
         const cartItems = get().cartItems || [];
         const products = useProductStore.getState().products; // Fetch products from the Product Store
 
-        // console.log("Cart Items: [CART STORE]", cartItems);
-        // console.log("Products in Store: [CART STORE]", products);
-
         return cartItems.map((cartItem) => {
           const product = products.find((p) => p.databaseId === cartItem.id);
-          if (!product) {
-            console.warn(`Product with id ${cartItem.id} not found`);
-            return {
-              ...cartItem,
-              productDetails: {
-                name: "Unknown Product",
-                price: "$0",
-                image: { sourceUrl: "/placeholder.jpg" },
-              },
-            }; // Placeholder product details
-          }
-          return { ...cartItem, productDetails: product };
+
+          // If product is not found, return a placeholder productDetails
+          const productDetails: Product = product || {
+            id: cartItem.id.toString(),
+            databaseId: cartItem.id,
+            name: "Default Product Name",
+            slug: "default-product-slug",
+            sku: "default-sku",
+            price: "0.00",
+            productCategories: {
+              nodes: [{ name: "Default Category" }],
+            },
+            image: {
+              sourceUrl: "/default-image.png",
+            },
+            cursor: "default-cursor",
+          };
+
+          // Return a CartDetail object
+          return {
+            id: cartItem.id,
+            quantity: cartItem.quantity,
+            productDetails,
+          };
         });
       },
 

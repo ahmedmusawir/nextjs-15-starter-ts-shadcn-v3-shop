@@ -55,8 +55,8 @@ const ThankyouPageContent = () => {
                 {cartDetails().map((product) => (
                   <li key={product.id} className="flex space-x-6 py-6">
                     <img
-                      alt={product.productDetails.imageAlt}
-                      src={product.productDetails.imageSrc}
+                      alt={product.productDetails.name}
+                      src={product.productDetails.image.sourceUrl}
                       className="size-24 flex-none rounded-md bg-gray-100 object-cover"
                     />
                     <div className="flex-auto space-y-1">
@@ -65,7 +65,11 @@ const ThankyouPageContent = () => {
                           {product.productDetails.name}
                         </Link>
                       </h3>
-                      <p>{product.productDetails.color}</p>
+                      <p>
+                        {product.productDetails?.productCategories?.nodes?.map(
+                          (cat) => cat.name
+                        )}
+                      </p>
                       <p>qty: {getItemQuantity(product.id)}</p>
                     </div>
                     <p className="flex-none font-medium text-gray-900">

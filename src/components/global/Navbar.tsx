@@ -22,8 +22,8 @@ const Navbar = () => {
   const pathname = usePathname();
   // Access Zustand store
   const { cartDetails, isLoading } = useCartStore();
-  const cartItemCount = cartDetails.length;
-  // console.log("Cart Item Count [Navbar]", cartItemCount);
+  const cartItemCount = cartDetails().length;
+  // console.log("Cart Item Count [Navbar]", cartDetails);
 
   interface NavLinkProps {
     href: string;
@@ -107,6 +107,13 @@ const Navbar = () => {
             {/* </button> */}
           </DropdownMenuTrigger>
           <DropdownMenuContent className="bg-white dark:bg-slate-600">
+            <DropdownMenuItem>
+              <Link href="/shop">Shop</Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem>
+              <Link href="/blog">Blog</Link>
+            </DropdownMenuItem>
+
             <DropdownMenuLabel>My Account</DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuItem>

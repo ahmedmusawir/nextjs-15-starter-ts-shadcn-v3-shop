@@ -20,8 +20,6 @@ import "./globals.scss";
 import Navbar from "@/components/global/Navbar";
 import Main from "@/components/common/Main";
 import Footer from "@/components/global/Footer";
-import { CartProvider } from "@/contexts/CartContext";
-import { ProductProvider } from "@/contexts/ProductContext";
 import Cart from "@/components/cart/Cart";
 // import { Toaster } from "@/components/ui/toaster";
 // import { ThemeProvider } from "./providers/ThemeProvider";

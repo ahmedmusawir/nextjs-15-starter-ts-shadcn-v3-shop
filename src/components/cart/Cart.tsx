@@ -24,7 +24,7 @@ const Cart = () => {
     setCartItems,
   } = useCartStore();
 
-  // console.log("CART DETAILS (/comp/cart)", cartDetails);
+  // console.log("CART DETAILS (/comp/cart)", cartDetails());
 
   // Handle quantity changes
   const handleQuantityChange = (itemId: number, newQuantity: number) => {
@@ -92,8 +92,8 @@ const Cart = () => {
                           <li key={cartItem.id} className="flex py-6">
                             <div className="h-24 w-24 flex-shrink-0 overflow-hidden rounded-md border border-gray-200">
                               <img
-                                src={cartItem.productDetails.imageSrc}
-                                alt={cartItem.productDetails.imageAlt}
+                                src={cartItem.productDetails.image.sourceUrl}
+                                alt={cartItem.productDetails.name}
                                 className="h-full w-full object-cover object-center"
                               />
                             </div>
@@ -107,7 +107,9 @@ const Cart = () => {
                                   </p>
                                 </div>
                                 <p className="mt-1 text-sm text-gray-500">
-                                  {cartItem.productDetails.color}
+                                  {cartItem?.productDetails?.productCategories?.nodes?.map(
+                                    (cat) => cat.name
+                                  )}
                                 </p>
                               </div>
                               <div className="flex flex-1 items-end justify-between text-sm">
