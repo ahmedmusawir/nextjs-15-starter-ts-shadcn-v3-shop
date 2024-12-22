@@ -3,6 +3,7 @@ import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 import localforage from "localforage";
 import { useProductStore } from "./useProductStore";
+import { Product } from "@/types/product";
 
 // Define the state and actions for pagination
 interface NumberedPaginationStore {
@@ -10,10 +11,16 @@ interface NumberedPaginationStore {
   totalProducts: number; // Total number of products
   productsPerPage: number; // Number of products displayed per page
   totalPages: number; // Total number of pages (calculated)
+  cursors: (string | null)[]; // Array of cursors for previous pages
+  pageData: Record<number, Product[]>; // Cache for products per page
   setTotalProducts: (count: number) => void; // Action to set total products
+  setCursor: (page: number, cursor: string | null) => void; // Action to update cursors
+  setPageData: (page: number, products: Product[]) => void; // Action to cache products
   goToPage: (page: number) => Promise<void>; // Navigate to a specific page
   nextPage: () => Promise<void>; // Navigate to the next page
   prevPage: () => Promise<void>; // Navigate to the previous page
+  loading: boolean; // Track loading status
+  setLoading: (loading: boolean) => void; // Action to toggle loading
 }
 
 export const useNumberedPaginationStore = create<NumberedPaginationStore>()(
@@ -21,8 +28,26 @@ export const useNumberedPaginationStore = create<NumberedPaginationStore>()(
     (set, get) => ({
       currentPage: 1, // Start at the first page
       totalProducts: 0, // Initialize with zero products
-      productsPerPage: 6, // Default number of products per page
+      productsPerPage: 12, // Default number of products per page
       totalPages: 0, // Dynamically calculated total pages
+      cursors: [null], // First page starts with no cursor
+      pageData: {}, // Cache for products per page
+      loading: false,
+      setLoading: (loading) => set({ loading }),
+
+      setPageData: (page, products) =>
+        set((state) => ({
+          pageData: { ...state.pageData, [page]: products }, // Cache products for the given page
+        })),
+
+      // Store the cursor for a specific page
+      setCursor: (page, cursor) => {
+        set((state) => {
+          const updatedCursors = [...state.cursors];
+          updatedCursors[page] = cursor;
+          return { cursors: updatedCursors };
+        });
+      },
 
       // Set the total number of products and recalculate total pages
       setTotalProducts: (count) =>
@@ -89,49 +114,65 @@ export const useNumberedPaginationStore = create<NumberedPaginationStore>()(
 
       // Navigate to the next page
       nextPage: async () => {
-        const { currentPage, totalPages, productsPerPage } = get();
+        const { currentPage, pageData, cursors, setLoading } = get();
         const productStore = useProductStore.getState();
 
-        if (currentPage < totalPages) {
-          const afterCursor =
-            productStore.products.length > 0
-              ? productStore.products[productStore.products.length - 1].cursor
-              : null;
+        setLoading(true); // Start loading spinner
 
-          const productsResponse = await fetchAllProducts(
-            productsPerPage,
-            afterCursor
-          );
-
-          if (productsResponse.items.length > 0) {
-            productStore.addProducts(productsResponse.items); // Append next page products
+        try {
+          if (pageData[currentPage + 1]) {
+            productStore.setProducts(pageData[currentPage + 1]);
             set({ currentPage: currentPage + 1 });
           } else {
-            console.error("No products found for the next page");
+            const cursor = cursors[currentPage - 1] || null;
+            const productsResponse = await fetchAllProducts(12, cursor);
+            const newProducts = productsResponse.items;
+
+            if (newProducts.length) {
+              productStore.setProducts(newProducts);
+              set((state) => {
+                const updatedCursors = [...state.cursors];
+                updatedCursors[currentPage] = productsResponse.hasNextPage
+                  ? productsResponse.endCursor
+                  : null;
+
+                return {
+                  currentPage: currentPage + 1,
+                  cursors: updatedCursors,
+                  pageData: {
+                    ...state.pageData,
+                    [currentPage + 1]: newProducts,
+                  },
+                };
+              });
+            }
           }
+        } catch (error) {
+          console.error("[nextPage] Error:", error);
+        } finally {
+          setLoading(false); // Stop loading spinner
         }
       },
 
       // Navigate to the previous page
       prevPage: async () => {
-        const { currentPage, productsPerPage } = get();
+        const { currentPage, pageData, setLoading } = get();
         const productStore = useProductStore.getState();
 
-        if (currentPage > 1) {
-          const newPage = currentPage - 1;
-          set({ currentPage: newPage });
+        setLoading(true); // Start loading spinner
 
-          // Reset products for the new page
-          const productsResponse = await fetchAllProducts(
-            productsPerPage,
-            null // Adjust cursor logic as necessary
-          );
-
-          if (productsResponse.items.length > 0) {
-            productStore.setProducts(productsResponse.items); // Replace with previous page products
-          } else {
-            console.error("No products found for the previous page");
+        try {
+          if (currentPage > 1) {
+            const prevProducts = pageData[currentPage - 1];
+            if (prevProducts) {
+              productStore.setProducts(prevProducts);
+              set({ currentPage: currentPage - 1 });
+            }
           }
+        } catch (error) {
+          console.error("[prevPage] Error:", error);
+        } finally {
+          setLoading(false); // Stop loading spinner
         }
       },
     }),
@@ -143,6 +184,7 @@ export const useNumberedPaginationStore = create<NumberedPaginationStore>()(
         totalProducts: state.totalProducts,
         productsPerPage: state.productsPerPage,
         totalPages: state.totalPages,
+        pageData: state.pageData, // Persist cached pages
       }), // Persist only relevant fields
     }
   )

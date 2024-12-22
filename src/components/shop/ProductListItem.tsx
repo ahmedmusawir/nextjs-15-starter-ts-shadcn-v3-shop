@@ -1,6 +1,7 @@
 "use client";
 
 import { useCartStore } from "@/store/useCartStore";
+import { useNumberedPaginationStore } from "@/store/useNumberedPaginationStore";
 import { Product } from "@/types/product";
 import Link from "next/link";
 import React from "react";
@@ -13,7 +14,9 @@ const ProductListItem = ({ product }: Props) => {
   const { increaseCartQuantity, setIsCartOpen, removeFromCart, cartItems } =
     useCartStore();
 
-  // console.log("Cart Items: [PRODUCT LIST ITEM]", cartItems);
+  // const { cursors } = useNumberedPaginationStore();
+
+  // console.log("Cursors List: [PRODUCT LIST ITEM]", cursors);
 
   const isProductInCart = (productId: number) => {
     return cartItems.some((item) => item.id === productId);

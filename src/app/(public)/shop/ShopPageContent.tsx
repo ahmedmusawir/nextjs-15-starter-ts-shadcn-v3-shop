@@ -7,20 +7,14 @@ import {
 } from "@/services/productServices";
 import ProductList from "@/components/shop/ProductList";
 import NumberedPagination from "@/components/common/NumberedPagination";
-import { useNumberedPaginationStore } from "@/store/useNumberedPaginationStore";
-import { useProductStore } from "@/store/useProductStore";
 
 const ShopPageContent = async () => {
   // Fetching the first 12 products
-  const productsResponse = await fetchAllProducts(8, null);
-  // console.log("Fetched Products Response:", productsResponse.items);
+  const productsResponse = await fetchAllProducts(12, null);
   const products = productsResponse.items;
-
+  const initialCursor = productsResponse.endCursor;
+  console.log("1st cursor - ShopPageContent", initialCursor);
   const totalProducts = await fetchTotalProductCount(); // Fetch total product count
-  // console.log("Total Product Count [ShopPageContent]", totalProducts);
-
-  // useNumberedPaginationStore.getState().setTotalProducts(totalProducts); // Set total products in store
-  // useProductStore.getState().setProducts(productsResponse.items); // Initialize products
 
   return (
     <>
@@ -51,6 +45,7 @@ const ShopPageContent = async () => {
               <ProductList
                 initialProducts={products}
                 totalProducts={totalProducts}
+                initialCursor={initialCursor}
               />
             </div>
             <NumberedPagination />
