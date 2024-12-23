@@ -16,7 +16,7 @@ const Cart = () => {
 
   // Access Zustand store
   const {
-    cartDetails,
+    cartItems,
     subtotal,
     removeFromCart,
     setIsCartOpen,
@@ -24,48 +24,45 @@ const Cart = () => {
     setCartItems,
   } = useCartStore();
 
-  // console.log("CART DETAILS (/comp/cart)", cartDetails());
-
   // Handle quantity changes
   const handleQuantityChange = (itemId: number, newQuantity: number) => {
-    const updatedCartItems = cartDetails().map((item) =>
+    const updatedCartItems = cartItems.map((item) =>
       item.id === itemId ? { ...item, quantity: newQuantity } : item
     );
     setCartItems(updatedCartItems); // Update Zustand store
   };
 
-  // Redirect to shop if cart is empty
+  // Redirect to shop if cart is empty after removal
   const handleRemoveCartItem = (id: number) => {
     removeFromCart(id);
-    if (cartDetails.length === 1) {
+    if (cartItems.length === 1) {
       router.push("/shop");
     }
   };
 
+  // Go back to shop and close the cart drawer
   const goBackToShop = () => {
     router.push("/shop");
     setIsCartOpen(false);
   };
 
   return (
-    <Dialog open={isCartOpen} onClose={setIsCartOpen} className="relative z-10">
-      <DialogBackdrop
-        transition
-        className="fixed inset-0 bg-gray-500/75 transition-opacity duration-500 ease-in-out data-[closed]:opacity-0"
-      />
+    <Dialog
+      open={isCartOpen}
+      onClose={() => setIsCartOpen(false)}
+      className="relative z-10"
+    >
+      <DialogBackdrop className="fixed inset-0 bg-gray-500/75 transition-opacity duration-500 ease-in-out" />
 
       <div className="fixed inset-0 overflow-hidden">
         <div className="absolute inset-0 overflow-hidden">
           <div className="pointer-events-none fixed inset-y-0 right-0 flex max-w-full pl-10">
-            <DialogPanel
-              transition
-              className="pointer-events-auto w-screen max-w-md transform transition duration-500 ease-in-out data-[closed]:translate-x-full sm:duration-700"
-            >
+            <DialogPanel className="pointer-events-auto w-screen max-w-md transform transition duration-500 ease-in-out sm:duration-700">
               <div className="flex h-full flex-col overflow-y-scroll bg-white shadow-xl">
                 <div className="flex-1 overflow-y-auto px-4 py-6 sm:px-6">
                   <div className="flex items-start justify-between">
                     <DialogTitle className="text-lg font-medium text-gray-900">
-                      Shopping cart
+                      Shopping Cart
                     </DialogTitle>
                     <div className="ml-3 flex h-7 items-center">
                       <button
@@ -80,20 +77,24 @@ const Cart = () => {
                   </div>
 
                   <div className="mt-8">
-                    <div className="flow-root">
+                    {cartItems.length === 0 ? (
+                      <h3 className="mt-12 text-center text-lg font-medium">
+                        The Shopping Cart is empty!
+                      </h3>
+                    ) : (
                       <ul
                         role="list"
                         className="-my-6 divide-y divide-gray-200"
                       >
-                        {cartDetails().length === 0 && (
-                          <h3 className="mt-12">The Shopping Cart is empty!</h3>
-                        )}
-                        {cartDetails().map((cartItem) => (
+                        {cartItems.map((cartItem) => (
                           <li key={cartItem.id} className="flex py-6">
                             <div className="h-24 w-24 flex-shrink-0 overflow-hidden rounded-md border border-gray-200">
                               <img
-                                src={cartItem.productDetails.image.sourceUrl}
-                                alt={cartItem.productDetails.name}
+                                src={cartItem.productDetails.image?.sourceUrl}
+                                alt={
+                                  cartItem.productDetails.name ||
+                                  "Product Image"
+                                }
                                 className="h-full w-full object-cover object-center"
                               />
                             </div>
@@ -107,9 +108,9 @@ const Cart = () => {
                                   </p>
                                 </div>
                                 <p className="mt-1 text-sm text-gray-500">
-                                  {cartItem?.productDetails?.productCategories?.nodes?.map(
-                                    (cat) => cat.name
-                                  )}
+                                  {cartItem.productDetails.productCategories.nodes
+                                    .map((cat) => cat.name)
+                                    .join(", ")}
                                 </p>
                               </div>
                               <div className="flex flex-1 items-end justify-between text-sm">
@@ -153,7 +154,7 @@ const Cart = () => {
                           </li>
                         ))}
                       </ul>
-                    </div>
+                    )}
                   </div>
                 </div>
 
@@ -164,9 +165,9 @@ const Cart = () => {
                   </div>
                   <div className="mt-6">
                     <Link
-                      href={cartDetails().length > 0 ? "/checkout" : "#"}
+                      href={cartItems.length > 0 ? "/checkout" : "#"}
                       className={`flex items-center justify-center rounded-md px-6 py-3 text-base font-medium shadow-sm ${
-                        cartDetails().length > 0
+                        cartItems.length > 0
                           ? "bg-indigo-600 text-white hover:bg-indigo-700 border border-transparent"
                           : "bg-gray-300 text-gray-500 border border-gray-400 cursor-not-allowed"
                       }`}
@@ -174,16 +175,17 @@ const Cart = () => {
                       Checkout
                     </Link>
                     <Link
-                      href={cartDetails().length > 0 ? "/cart" : "#"}
+                      href={cartItems.length > 0 ? "/cart" : "#"}
                       className={`flex items-center justify-center rounded-md px-6 py-3 text-base font-medium shadow-sm mt-5 ${
-                        cartDetails().length > 0
-                          ? "bg-purple-600 text-white hover:bg-indigo-700 border border-transparent"
+                        cartItems.length > 0
+                          ? "bg-purple-600 text-white hover:bg-purple-700 border border-transparent"
                           : "bg-gray-300 text-gray-500 border border-gray-400 cursor-not-allowed"
                       }`}
                     >
                       Cart Page
                     </Link>
                   </div>
+
                   <div className="mt-6 flex justify-center text-center text-sm text-gray-500">
                     <p>
                       or{" "}
