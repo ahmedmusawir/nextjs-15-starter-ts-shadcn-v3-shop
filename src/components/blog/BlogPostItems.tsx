@@ -19,11 +19,6 @@ const BlogPostItems = ({ initialPosts, endCursor, hasNextPage }: Props) => {
 
   // Hydrate Zustand store AFTER the component mounts
   useEffect(() => {
-    // console.log("Hydration Status Check Before Updating Store:", {
-    //   hasHydrated,
-    //   items: usePaginationStore.getState().items,
-    // });
-
     if (!hasHydrated && initialPosts.length > 0) {
       // console.log("Hydrating Zustand Store with Initial Posts:", initialPosts);
       usePaginationStore.setState((state) => {
