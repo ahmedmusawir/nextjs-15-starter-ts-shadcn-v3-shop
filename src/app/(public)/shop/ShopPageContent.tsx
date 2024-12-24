@@ -13,7 +13,6 @@ const ShopPageContent = async () => {
   const productsResponse = await fetchAllProducts(12, null);
   const products = productsResponse.items;
   const initialCursor = productsResponse.endCursor;
-  console.log("1st cursor - ShopPageContent", initialCursor);
   const totalProducts = await fetchTotalProductCount(); // Fetch total product count
 
   return (

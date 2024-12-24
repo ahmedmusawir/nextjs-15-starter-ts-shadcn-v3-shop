@@ -22,6 +22,17 @@ const ProductList = ({
     useNumberedPaginationStore();
 
   // On initial load, sync SSR-fetched products into the Zustand store
+  // useEffect(() => {
+  //   if (!useProductStore.getState().hasHydrated) {
+  //     setProducts(initialProducts); // Set initial products
+  //     setTotalProducts(totalProducts); // Set total product count
+  //     setCursor(0, initialCursor); // Set pagination cursor
+  //     setPageData(1, initialProducts); // Cache page 1
+  //     markHydrated(); // Mark hydration as complete
+  //   }
+  // }, [initialProducts, initialCursor, setProducts]);
+
+  // On initial load, sync SSR-fetched products into the Zustand store
   useEffect(() => {
     // Hydrate Zustand stores with SSR-fetched data
     setProducts(initialProducts);

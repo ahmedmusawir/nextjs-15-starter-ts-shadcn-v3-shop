@@ -5,6 +5,7 @@ import { usePaginationStore } from "@/store/usePaginationStore";
 import { BlogPost } from "@/types/blog";
 import Link from "next/link";
 import { useEffect } from "react";
+import Image from "next/image";
 
 interface Props {
   initialPosts: BlogPost[];
@@ -47,10 +48,17 @@ const BlogPostItems = ({ initialPosts, endCursor, hasNextPage }: Props) => {
           key={post.id}
           className="relative isolate flex flex-col justify-end overflow-hidden rounded-2xl bg-gray-900 px-8 pb-8 pt-80 sm:pt-48 lg:pt-80"
         >
-          <img
+          {/* <img
             alt=""
             src={post?.featuredImage.node.sourceUrl}
             className="absolute inset-0 -z-10 size-full object-cover"
+          /> */}
+          <Image
+            alt={post?.title || "Blog Post Image"} // Use alt text from WP if available
+            src={post?.featuredImage.node.sourceUrl}
+            className="absolute inset-0 -z-10 size-full object-cover"
+            fill // Enables full-width image (replaces size-full)
+            priority // Optional: Helps pre-render images above the fold faster
           />
           <div className="absolute inset-0 -z-10 bg-gradient-to-t from-gray-900 via-gray-900/40" />
           <div className="absolute inset-0 -z-10 rounded-2xl ring-1 ring-inset ring-gray-900/10" />
