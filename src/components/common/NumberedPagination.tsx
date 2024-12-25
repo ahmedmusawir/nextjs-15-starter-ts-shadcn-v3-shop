@@ -1,21 +1,16 @@
 "use client";
 
-import ReactPaginate from "react-paginate";
 import { useNumberedPaginationStore } from "@/store/useNumberedPaginationStore";
-import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/20/solid";
-import Spinner from "./Spinner";
 import SpinnerSmall from "./SpinnerSmall";
 
 const NumberedPagination = () => {
-  const { currentPage, totalPages, goToPage, loading } =
-    useNumberedPaginationStore();
+  const { currentPage, totalPages, loading } = useNumberedPaginationStore();
 
   // Handle page change
   // Handle page change
   const handlePageClick = ({ selected }: { selected: number }) => {
-    const { goToPage, setLoading } = useNumberedPaginationStore.getState();
+    const { setLoading } = useNumberedPaginationStore.getState();
     setLoading(true); // Show spinner
-    goToPage(selected + 1).finally(() => setLoading(false)); // Call goToPage and stop spinner after
   };
 
   return (

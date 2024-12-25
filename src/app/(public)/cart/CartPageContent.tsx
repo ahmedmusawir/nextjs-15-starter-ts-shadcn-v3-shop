@@ -1,5 +1,6 @@
 "use client";
 
+import CartImage from "@/components/cart/CartImage";
 import Spinner from "@/components/common/Spinner";
 import { Button } from "@/components/ui/button";
 import { useCartStore } from "@/store/useCartStore";
@@ -154,10 +155,10 @@ const CartPageContent = () => {
                 {cartDetails().map((product) => (
                   <li key={product.id} className="flex py-6 sm:py-10">
                     <div className="shrink-0">
-                      <img
-                        alt={product.productDetails.name}
-                        src={product.productDetails.image.sourceUrl}
-                        className="size-24 rounded-md object-cover sm:size-48"
+                      <CartImage
+                        cartItem={product}
+                        imgHeight={200}
+                        imgWidth={200}
                       />
                     </div>
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { useProductStore } from "@/store/useProductStore";
 import ProductListItem from "@/components/shop/ProductListItem";
 import { Product } from "@/types/product";
