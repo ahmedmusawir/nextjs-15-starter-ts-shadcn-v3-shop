@@ -7,9 +7,9 @@ import { Product } from "@/types/product";
 import { useNumberedPaginationStore } from "@/store/useNumberedPaginationStore";
 
 interface ProductListProps {
-  initialProducts: Product[]; // Server-side rendered initial products
-  totalProducts: number; // Total product count
-  initialCursor: string | null; // Cursor for the first page
+  initialProducts: Product[];
+  totalProducts: number;
+  initialCursor: string | null;
 }
 
 const ProductList = ({
@@ -18,17 +18,17 @@ const ProductList = ({
   initialCursor,
 }: ProductListProps) => {
   const { products, setProducts, hasHydrated } = useProductStore();
-  const { setTotalProducts, setCursor, setPageData, currentPage } =
+  const { setTotalProducts, setCursor, setPageData } =
     useNumberedPaginationStore();
 
   useEffect(() => {
     if (!hasHydrated) {
-      // Hydrate Zustand store only if not hydrated
+      // Only hydrate Zustand store if not already hydrated
       setProducts(initialProducts);
       useProductStore.setState({ hasHydrated: true }); // Mark hydration complete
     }
 
-    // Update pagination metadata
+    // Always update pagination metadata
     setTotalProducts(totalProducts);
     setCursor(0, initialCursor);
     setPageData(1, initialProducts); // Cache Page 1
@@ -43,13 +43,9 @@ const ProductList = ({
     setPageData,
   ]);
 
-  // Dynamically decide data to render based on currentPage and Zustand state
-  const dataToDisplay =
-    currentPage === 1 && !products.length ? initialProducts : products;
-
   return (
     <>
-      {dataToDisplay.map((product) => (
+      {products.map((product) => (
         <ProductListItem key={product.databaseId} product={product} />
       ))}
     </>

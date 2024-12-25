@@ -12,7 +12,6 @@ interface ProductStore {
   addProducts: (products: Product[]) => void; // Action to append new products
   hasHydrated: boolean; // Track if the store has been hydrated
   setHasHydrated: (hydrated: boolean) => void; // Action to mark hydration complete
-  clearProducts: () => void; // Action to clear the products
 }
 
 // Create a custom storage using localforage
@@ -40,7 +39,6 @@ export const useProductStore = create<ProductStore>()(
       setProducts: (products) => set({ products }), // Overwrite the current products
       addProducts: (products) =>
         set((state) => ({ products: [...state.products, ...products] })), // Append new products
-      clearProducts: () => set({ products: [] }), // Clear products when needed
     }),
     {
       name: "product-storage", // Name for IndexDB storage

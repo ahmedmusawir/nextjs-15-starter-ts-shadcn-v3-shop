@@ -3,6 +3,7 @@
 import Spinner from "@/components/common/Spinner";
 import { Button } from "@/components/ui/button";
 import { useCartStore } from "@/store/useCartStore";
+import { useNumberedPaginationStore } from "@/store/useNumberedPaginationStore";
 import { ChevronDownIcon } from "@heroicons/react/16/solid";
 import {
   CheckIcon,
@@ -101,8 +102,10 @@ const CartPageContent = () => {
   // Redirect to shop if cart is empty
   const handleRemoveCartItem = (id: number) => {
     removeFromCart(id);
-    // console.log("Cart Item Count: [CartPageContent]", cartDetails.length);
+
     if (cartDetails().length === 0) {
+      const { resetPagination } = useNumberedPaginationStore.getState();
+      resetPagination([], null); // Clear Zustand state
       router.push("/shop");
     }
   };

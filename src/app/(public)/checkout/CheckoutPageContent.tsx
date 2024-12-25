@@ -12,6 +12,7 @@ import Spinner from "@/components/common/Spinner";
 import { useCartStore } from "@/store/useCartStore";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { useNumberedPaginationStore } from "@/store/useNumberedPaginationStore";
 
 const deliveryMethods = [
   {
@@ -64,11 +65,21 @@ const CheckoutPageContent = () => {
   // Redirect to shop if cart is empty
   const handleRemoveCartItem = (id: number) => {
     removeFromCart(id);
-    // console.log("Cart Item Count: [CheckoutPageContent]", cartDetails.length);
+
     if (cartDetails().length === 0) {
+      const { resetPagination } = useNumberedPaginationStore.getState();
+      resetPagination([], null); // Clear Zustand state
       router.push("/shop");
     }
   };
+
+  // const handleRemoveCartItem = (id: number) => {
+  //   removeFromCart(id);
+  //   // console.log("Cart Item Count: [CheckoutPageContent]", cartDetails.length);
+  //   if (cartDetails().length === 0) {
+  //     router.push("/shop");
+  //   }
+  // };
 
   // Makes sure Zustand states are loaded
   if (isLoading) {

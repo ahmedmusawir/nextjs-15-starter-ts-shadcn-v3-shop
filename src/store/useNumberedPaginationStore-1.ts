@@ -21,10 +21,6 @@ interface NumberedPaginationStore {
   prevPage: () => Promise<void>; // Navigate to the previous page
   loading: boolean; // Track loading status
   setLoading: (loading: boolean) => void; // Action to toggle loading
-  resetPagination: (
-    initialProducts: Product[],
-    initialCursor: string | null
-  ) => void;
 }
 
 export const useNumberedPaginationStore = create<NumberedPaginationStore>()(
@@ -178,16 +174,6 @@ export const useNumberedPaginationStore = create<NumberedPaginationStore>()(
         } finally {
           setLoading(false); // Stop loading spinner
         }
-      },
-
-      resetPagination: (initialProducts, initialCursor) => {
-        const productStore = useProductStore.getState();
-        productStore.setProducts(initialProducts); // Reset products to initial SSR data
-        set({
-          currentPage: 1,
-          cursors: [initialCursor],
-          pageData: { 1: initialProducts }, // Cache initial page data
-        });
       },
     }),
     {

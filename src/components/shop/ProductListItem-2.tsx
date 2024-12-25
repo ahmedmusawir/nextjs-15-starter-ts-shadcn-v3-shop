@@ -39,13 +39,6 @@ const ProductListItem = ({ product }: Props) => {
             height={300} // Adjust this as needed for your design
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
           />
-          {/* <Image
-            src={product.image.sourceUrl}
-            alt={product.name}
-            fill
-            className="object-cover rounded-lg"
-            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-          /> */}
         </div>
       </Link>
       <section className="">

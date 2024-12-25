@@ -31,21 +31,18 @@ const ProductListItem = ({ product }: Props) => {
     <div key={product.id} className="group relative my-5">
       <Link href={`/shop/${product.databaseId}`}>
         <div className="h-56 w-full overflow-hidden rounded-md bg-gray-200 group-hover:opacity-75 lg:h-72 xl:h-80">
-          <Image
+          {/* <img
             src={product.image.sourceUrl}
             alt={product.name}
-            className="object-cover w-full h-full rounded-lg"
-            width={300} // Adjust this as needed for your design
-            height={300} // Adjust this as needed for your design
-            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-          />
-          {/* <Image
+            className="h-full w-full object-cover object-center"
+          /> */}
+          <Image
             src={product.image.sourceUrl}
             alt={product.name}
             fill
             className="object-cover rounded-lg"
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-          /> */}
+          />
         </div>
       </Link>
       <section className="">

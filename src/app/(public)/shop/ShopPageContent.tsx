@@ -7,11 +7,12 @@ import {
 } from "@/services/productServices";
 import ProductList from "@/components/shop/ProductList";
 import NumberedPagination from "@/components/common/NumberedPagination";
+import ShopPageReset from "@/components/shop/ShopPageReset";
 
 const ShopPageContent = async () => {
   // Fetching the first 12 products
   const productsResponse = await fetchAllProducts(12, null);
-  const products = productsResponse.items;
+  const initialProducts = productsResponse.items;
   const initialCursor = productsResponse.endCursor;
   const totalProducts = await fetchTotalProductCount(); // Fetch total product count
 
@@ -40,9 +41,15 @@ const ShopPageContent = async () => {
               </a>
             </div>
 
+            {/* Reset Zustand pagination on client-side */}
+            <ShopPageReset
+              initialProducts={initialProducts}
+              initialCursor={initialCursor}
+            />
+
             <div className="mt-6 grid grid-cols-2 gap-x-4 gap-y-10 sm:gap-x-6 md:grid-cols-4 md:gap-y-0 lg:gap-x-8">
               <ProductList
-                initialProducts={products}
+                initialProducts={initialProducts}
                 totalProducts={totalProducts}
                 initialCursor={initialCursor}
               />

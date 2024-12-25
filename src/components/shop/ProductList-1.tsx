@@ -7,9 +7,9 @@ import { Product } from "@/types/product";
 import { useNumberedPaginationStore } from "@/store/useNumberedPaginationStore";
 
 interface ProductListProps {
-  initialProducts: Product[]; // Server-side rendered initial products
-  totalProducts: number; // Total product count
-  initialCursor: string | null; // Cursor for the first page
+  initialProducts: Product[];
+  totalProducts: number;
+  initialCursor: string | null;
 }
 
 const ProductList = ({
@@ -17,23 +17,24 @@ const ProductList = ({
   totalProducts,
   initialCursor,
 }: ProductListProps) => {
-  const { products, setProducts, hasHydrated } = useProductStore();
-  const { setTotalProducts, setCursor, setPageData, currentPage } =
+  const { products, setProducts } = useProductStore();
+  const { setTotalProducts, setCursor, setPageData } =
     useNumberedPaginationStore();
 
   useEffect(() => {
+    const { hasHydrated, setProducts } = useProductStore.getState();
+
     if (!hasHydrated) {
-      // Hydrate Zustand store only if not hydrated
+      // Only hydrate the store if it hasn’t been hydrated yet
       setProducts(initialProducts);
       useProductStore.setState({ hasHydrated: true }); // Mark hydration complete
     }
 
-    // Update pagination metadata
+    // Always update pagination metadata
     setTotalProducts(totalProducts);
     setCursor(0, initialCursor);
     setPageData(1, initialProducts); // Cache Page 1
   }, [
-    hasHydrated,
     initialProducts,
     initialCursor,
     totalProducts,
@@ -43,13 +44,20 @@ const ProductList = ({
     setPageData,
   ]);
 
-  // Dynamically decide data to render based on currentPage and Zustand state
-  const dataToDisplay =
-    currentPage === 1 && !products.length ? initialProducts : products;
+  // On initial load, sync SSR-fetched products into the Zustand store
+  // useEffect(() => {
+  //   // Hydrate Zustand stores with SSR-fetched data
+  //   setProducts(initialProducts);
+  //   setTotalProducts(totalProducts);
+  //   setCursor(0, initialCursor);
+  //   setPageData(1, initialProducts); // Cache Page 1
+  // }, [initialProducts, initialCursor, setProducts]);
+
+  // console.log("Products in Store: [PRODUCT LIST]", products);
 
   return (
     <>
-      {dataToDisplay.map((product) => (
+      {products.map((product) => (
         <ProductListItem key={product.databaseId} product={product} />
       ))}
     </>
