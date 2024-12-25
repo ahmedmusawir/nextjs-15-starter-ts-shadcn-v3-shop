@@ -9,7 +9,6 @@ import {
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import { useRouter } from "next/navigation";
 import { useCartStore } from "@/store/useCartStore";
-import Image from "next/image";
 import Link from "next/link";
 
 const Cart = () => {
@@ -90,26 +89,12 @@ const Cart = () => {
                         {cartItems.map((cartItem) => (
                           <li key={cartItem.id} className="flex py-6">
                             <div className="h-24 w-24 flex-shrink-0 overflow-hidden rounded-md border border-gray-200">
-                              {/* <img
+                              <img
                                 src={cartItem.productDetails.image?.sourceUrl}
                                 alt={
                                   cartItem.productDetails.name ||
                                   "Product Image"
                                 }
-                                className="h-full w-full object-cover object-center"
-                              /> */}
-
-                              <Image
-                                src={
-                                  cartItem.productDetails.image?.sourceUrl ||
-                                  "/placeholder-image.jpg"
-                                } // Add a fallback placeholder if necessary
-                                alt={
-                                  cartItem.productDetails.name ||
-                                  "Product Image"
-                                }
-                                width={85}
-                                height={85}
                                 className="h-full w-full object-cover object-center"
                               />
                             </div>

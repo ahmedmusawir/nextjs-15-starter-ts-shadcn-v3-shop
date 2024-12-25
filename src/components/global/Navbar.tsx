@@ -17,7 +17,6 @@ import { MenuIcon } from "lucide-react";
 import { ShoppingBagIcon } from "@heroicons/react/24/outline";
 import { useCartStore } from "@/store/useCartStore";
 import Spinner from "../common/Spinner";
-import { useNumberedPaginationStore } from "@/store/useNumberedPaginationStore";
 
 const Navbar = () => {
   const pathname = usePathname();

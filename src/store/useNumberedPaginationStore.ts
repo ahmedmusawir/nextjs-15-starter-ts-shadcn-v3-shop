@@ -16,7 +16,7 @@ interface NumberedPaginationStore {
   setTotalProducts: (count: number) => void; // Action to set total products
   setCursor: (page: number, cursor: string | null) => void; // Action to update cursors
   setPageData: (page: number, products: Product[]) => void; // Action to cache products
-  goToPage: (page: number) => Promise<void>; // Navigate to a specific page
+  // goToPage: (page: number) => Promise<void>; // Navigate to a specific page
   nextPage: () => Promise<void>; // Navigate to the next page
   prevPage: () => Promise<void>; // Navigate to the previous page
   loading: boolean; // Track loading status
@@ -61,60 +61,60 @@ export const useNumberedPaginationStore = create<NumberedPaginationStore>()(
         })),
 
       // Navigate to a specific page
-      goToPage: async (page) => {
-        const { productsPerPage, totalPages, currentPage } = get();
-        const productStore = useProductStore.getState();
+      // goToPage: async (page) => {
+      //   const { productsPerPage, totalPages, currentPage } = get();
+      //   const productStore = useProductStore.getState();
 
-        console.log("[PaginationStore] Navigating to page:", page);
+      //   console.log("[PaginationStore] Navigating to page:", page);
 
-        if (page < 1 || page > totalPages) {
-          console.error("Invalid page number:", page);
-          return;
-        }
+      //   if (page < 1 || page > totalPages) {
+      //     console.error("Invalid page number:", page);
+      //     return;
+      //   }
 
-        // Check if products for the requested page are already available
-        if (page === currentPage) {
-          console.log("[PaginationStore] Already on the requested page:", page);
-          return;
-        }
+      //   // Check if products for the requested page are already available
+      //   if (page === currentPage) {
+      //     console.log("[PaginationStore] Already on the requested page:", page);
+      //     return;
+      //   }
 
-        // Calculate the cursor for the requested page
-        const currentProducts = productStore.products;
-        const afterCursor =
-          page > 1 && currentProducts.length
-            ? currentProducts[currentProducts.length - 1].cursor
-            : null;
+      //   // Calculate the cursor for the requested page
+      //   const currentProducts = productStore.products;
+      //   const afterCursor =
+      //     page > 1 && currentProducts.length
+      //       ? currentProducts[currentProducts.length - 1].cursor
+      //       : null;
 
-        console.log(
-          "[PaginationStore] Calculated Cursor for Page:",
-          afterCursor
-        );
+      //   console.log(
+      //     "[PaginationStore] Calculated Cursor for Page:",
+      //     afterCursor
+      //   );
 
-        try {
-          // Fetch products for the requested page
-          const productsResponse = await fetchAllProducts(
-            productsPerPage,
-            afterCursor
-          );
+      //   try {
+      //     // Fetch products for the requested page
+      //     const productsResponse = await fetchAllProducts(
+      //       productsPerPage,
+      //       afterCursor
+      //     );
 
-          if (productsResponse.items.length > 0) {
-            productStore.setProducts(productsResponse.items); // Set new page products
-            set({ currentPage: page });
-          } else {
-            console.warn(
-              `[PaginationStore] No products found for page ${page}. Retrying with page 1.`
-            );
-            set({ currentPage: 1 });
-            const fallbackResponse = await fetchAllProducts(
-              productsPerPage,
-              null // Fallback to the first page
-            );
-            productStore.setProducts(fallbackResponse.items);
-          }
-        } catch (error) {
-          console.error("[PaginationStore] Error fetching products:", error);
-        }
-      },
+      //     if (productsResponse.items.length > 0) {
+      //       productStore.setProducts(productsResponse.items); // Set new page products
+      //       set({ currentPage: page });
+      //     } else {
+      //       console.warn(
+      //         `[PaginationStore] No products found for page ${page}. Retrying with page 1.`
+      //       );
+      //       set({ currentPage: 1 });
+      //       const fallbackResponse = await fetchAllProducts(
+      //         productsPerPage,
+      //         null // Fallback to the first page
+      //       );
+      //       productStore.setProducts(fallbackResponse.items);
+      //     }
+      //   } catch (error) {
+      //     console.error("[PaginationStore] Error fetching products:", error);
+      //   }
+      // },
 
       // Navigate to the next page
       nextPage: async () => {
