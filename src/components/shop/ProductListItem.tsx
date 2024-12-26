@@ -35,9 +35,13 @@ const ProductListItem = ({ product }: Props) => {
             src={product.image.sourceUrl}
             alt={product.name}
             className="object-cover w-full h-full rounded-lg"
-            width={300} // Adjust this as needed for your design
-            height={300} // Adjust this as needed for your design
+            width={300}
+            height={300}
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+            placeholder="blur"
+            blurDataURL="/placeholder.jpg" // Ensure this is correctly pointed
+            loading="eager" // Load critical images immediately
+            priority={true} // Prioritize this image for LCP
           />
         </div>
       </Link>
