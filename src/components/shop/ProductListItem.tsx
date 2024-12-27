@@ -3,8 +3,8 @@
 import React from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { Product } from "@/types/product";
 import { useCartStore } from "@/store/useCartStore";
+import { Product } from "@/types/product";
 
 interface Props {
   product: Product;
@@ -29,10 +29,11 @@ const ProductListItem = ({ product }: Props) => {
   };
   return (
     <div key={product.id} className="group relative my-5">
-      <Link href={`/shop/${product.databaseId}`}>
+      <Link href={`/shop/${product.slug}`}>
         <div className="h-56 w-full overflow-hidden rounded-md bg-gray-200 group-hover:opacity-75 lg:h-72 xl:h-80">
           <Image
-            src={product.image.sourceUrl}
+            src={product.image?.sourceUrl}
+            // src={product.featuredImage?.sourceUrl || "/placeholder.jpg"}
             alt={product.name}
             className="object-cover w-full h-full rounded-lg"
             width={300}
@@ -48,7 +49,7 @@ const ProductListItem = ({ product }: Props) => {
       <section className="">
         <h3 className="mt-4 text-sm text-gray-700">{product.name}</h3>
         <p className="mt-1 text-sm text-gray-500">
-          {product.productCategories.nodes.map((cat) => cat.name)}
+          {product.productCategories?.nodes.map((cat) => cat.name)}
         </p>
         <p className="mt-1 text-sm font-medium text-gray-900">
           {product.price}

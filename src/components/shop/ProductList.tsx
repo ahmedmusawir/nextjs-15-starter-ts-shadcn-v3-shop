@@ -3,8 +3,8 @@
 import { useEffect, useMemo } from "react";
 import { useProductStore } from "@/store/useProductStore";
 import ProductListItem from "@/components/shop/ProductListItem";
-import { Product } from "@/types/product";
 import { useNumberedPaginationStore } from "@/store/useNumberedPaginationStore";
+import { Product } from "@/types/product";
 
 interface ProductListProps {
   initialProducts: Product[]; // Server-side rendered initial products
@@ -50,7 +50,7 @@ const ProductList = ({
   return (
     <>
       {dataToDisplay.map((product) => (
-        <ProductListItem key={product.databaseId} product={product} />
+        <ProductListItem key={product.id} product={product} />
       ))}
     </>
   );
