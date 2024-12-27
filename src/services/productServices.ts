@@ -163,3 +163,133 @@ export const fetchProductById = async (id: number) => {
 };
 
 // ------------------------------- end of fetchProductById -------------------------------------
+
+/**
+ * Fetch Product by Slug
+ *
+ * This function fetches the details of a single product from the WordPress GraphQL API
+ * based on the provided slug. It uses the `GRAPHQL_QUERY_GET_SINGLE_PRODUCT_BY_SLUG`
+ * query to retrieve product details, including attributes, tags, gallery images,
+ * related products, and other metadata.
+ *
+ * @param {string} slug - The slug of the product to fetch.
+ * @returns {Promise<Product>} A product object containing:
+ *   - id: Unique identifier of the product.
+ *   - name: Name of the product.
+ *   - slug: Slug of the product.
+ *   - sku: SKU of the product.
+ *   - price: Price of the product.
+ *   - featuredImage: Featured image of the product.
+ *   - productCategories: Categories associated with the product.
+ *   - other fields based on the query.
+ * @throws {Error} If the request fails or the response is invalid.
+ */
+
+import { GRAPHQL_QUERY_GET_SINGLE_PRODUCT_BY_SLUG } from "@/graphql/queries/products/getProductBySlug";
+
+export const fetchProductBySlug = async (slug: string): Promise<Product> => {
+  const response = await fetch(WORDPRESS_API_URL as string, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      query: GRAPHQL_QUERY_GET_SINGLE_PRODUCT_BY_SLUG,
+      variables: { slug },
+    }),
+    next: {
+      revalidate: 60, // Revalidate the cached data every 60 seconds
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error(`Failed to fetch product by slug: ${response.statusText}`);
+  }
+
+  const result = await response.json();
+
+  const product = result?.data?.product;
+
+  if (!product) {
+    throw new Error("Product not found");
+  }
+
+  return product as Product;
+};
+
+// ------------------------------- end of fetchProductBySlug -------------------------------------
+
+/**
+ * Fetch All Product Slugs
+ *
+ * This function retrieves all product slugs from the WordPress GraphQL API with
+ * support for pagination. It uses the `GRAPHQL_QUERY_GET_ALL_PRODUCT_SLUGS` query
+ * to fetch the data in chunks and ensures all slugs are returned, even if the total
+ * exceeds the limit of a single request.
+ *
+ * @returns {Promise<string[]>} An array of product slugs.
+ * @throws {Error} If the request fails or the response is invalid.
+ *
+ * Usage:
+ * - Used to generate static pages for all products in Next.js with SSG.
+ */
+
+import { GRAPHQL_QUERY_GET_ALL_PRODUCT_SLUGS } from "@/graphql/queries/products/getAllProductSlugs";
+
+interface ProductSlugResponse {
+  data: {
+    products: {
+      nodes: { slug: string }[];
+      pageInfo: {
+        hasNextPage: boolean;
+        endCursor: string | null;
+      };
+    };
+  };
+  errors?: Array<{ message: string }>;
+}
+
+export const fetchAllProductSlugs = async (): Promise<string[]> => {
+  let hasNextPage = true;
+  let endCursor: string | null = null;
+  const allSlugs: string[] = [];
+
+  while (hasNextPage) {
+    const response: ProductSlugResponse = await fetch(WORDPRESS_API_URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        query: GRAPHQL_QUERY_GET_ALL_PRODUCT_SLUGS,
+        variables: {
+          first: 100,
+          after: endCursor,
+        },
+      }),
+    }).then((res) => res.json());
+
+    // Check for GraphQL errors
+    if (response.errors) {
+      console.error("GraphQL Errors:", response.errors);
+      throw new Error("Failed to fetch post slugs");
+    }
+
+    const { nodes, pageInfo } = await response.data.products;
+
+    if (!nodes.length) {
+      break; // No more slugs to fetch
+    }
+
+    // Collect slugs
+    allSlugs.push(...nodes.map((node: { slug: string }) => node.slug));
+
+    // Update pagination info
+    hasNextPage = pageInfo?.hasNextPage || false;
+    endCursor = pageInfo?.endCursor || null;
+  }
+
+  return allSlugs;
+};
+
+// ------------------------------- end of fetchAllProductSlugs -------------------------------------
