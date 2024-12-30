@@ -33,11 +33,13 @@ export interface RelatedProduct {
   slug: string;
   price?: string;
   featuredImage?: {
-    sourceUrl: string;
+    node: {
+      sourceUrl: string;
+    };
   };
 }
 
-export interface SingleProduct {
+export interface ProductSingle {
   id: string;
   databaseId: number;
   name: string;
@@ -60,7 +62,9 @@ export interface SingleProduct {
   related?: RelatedProduct[];
   price?: string;
   featuredImage?: {
-    sourceUrl: string;
+    node: {
+      sourceUrl: string;
+    };
   };
   productCategories?: {
     nodes: ProductCategory[];
