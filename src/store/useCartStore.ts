@@ -2,7 +2,6 @@ import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 import { useProductStore } from "@/store/useProductStore"; // Import the product store
 import { CartItem } from "@/types/cart";
-import { Product } from "@/types/product";
 
 // Type for the Zustand store
 interface CartStore {

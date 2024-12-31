@@ -17,6 +17,7 @@ import { StarIcon } from "@heroicons/react/20/solid";
 import { HeartIcon, MinusIcon, PlusIcon } from "@heroicons/react/24/outline";
 import { useState } from "react";
 import Image from "next/image";
+import { useCartStore } from "@/store/useCartStore";
 
 const demoProduct = {
   name: "Zip Tote Basket",
@@ -114,9 +115,26 @@ interface Props {
   singleProduct: ProductSingle;
 }
 
-const SingleProduct = ({ singleProduct: product }: Props) => {
-  const [open, setOpen] = useState(false);
+const SingleProductContent = ({ singleProduct: product }: Props) => {
   const [selectedColor, setSelectedColor] = useState(demoProduct.colors[0]);
+
+  const { cartItems, setIsCartOpen, increaseCartQuantity, removeFromCart } =
+    useCartStore();
+
+  // Check if the product is already in the cart
+  const isProductInCart = (productId: number) => {
+    return cartItems.some((item) => item.id === productId);
+  };
+
+  const handleAddToCart = (id: number) => {
+    increaseCartQuantity(id); // Add item to the cart by ID
+    setIsCartOpen(true); // Open the side cart
+  };
+
+  const handleRemoveCartItem = (id: number) => {
+    removeFromCart(id); // Remove item from the cart by ID
+    setIsCartOpen(true); // Open the side cart
+  };
 
   return (
     <div className="bg-white">
@@ -136,11 +154,6 @@ const SingleProduct = ({ singleProduct: product }: Props) => {
                     >
                       <span className="sr-only">{product.name}</span>
                       <span className="absolute inset-0 overflow-hidden rounded-md">
-                        {/* <img
-                          alt=""
-                          src={image.sourceUrl}
-                          className="size-full object-cover"
-                        /> */}
                         <Image
                           alt=""
                           src={image.sourceUrl}
@@ -163,11 +176,6 @@ const SingleProduct = ({ singleProduct: product }: Props) => {
               <TabPanels>
                 {product.galleryImages?.length === 0 && (
                   <TabPanel>
-                    {/* <img
-                      alt={product.name}
-                      src={product.featuredImage?.node.sourceUrl}
-                      className="aspect-square w-full object-cover sm:rounded-lg"
-                    /> */}
                     <Image
                       alt={product.name}
                       src={
@@ -184,11 +192,6 @@ const SingleProduct = ({ singleProduct: product }: Props) => {
                 )}
                 {product.galleryImages?.map((image) => (
                   <TabPanel key={image.sourceUrl}>
-                    {/* <img
-                      alt={product.name}
-                      src={image.sourceUrl}
-                      className="aspect-square w-full object-cover sm:rounded-lg"
-                    /> */}
                     <Image
                       alt={product.name}
                       src={image.sourceUrl || "/placeholder.png"}
@@ -280,22 +283,36 @@ const SingleProduct = ({ singleProduct: product }: Props) => {
                   </fieldset>
                 </div>
 
-                <div className="mt-10 flex">
-                  <button
-                    type="submit"
-                    className="flex max-w-xs flex-1 items-center justify-center rounded-md border border-transparent bg-indigo-600 px-8 py-3 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-gray-50 sm:w-full"
-                  >
-                    Add to bag
-                  </button>
-
-                  <button
-                    type="button"
-                    className="ml-4 flex items-center justify-center rounded-md px-3 py-3 text-gray-400 hover:bg-gray-100 hover:text-gray-500"
-                  >
-                    <HeartIcon aria-hidden="true" className="size-6 shrink-0" />
-                    <span className="sr-only">Add to favorites</span>
-                  </button>
+                {/* <div className="mt-10 flex"> */}
+                {/* Add to Cart Button */}
+                <div className="mt-10">
+                  {!isProductInCart(product.databaseId) && (
+                    <button
+                      type="submit"
+                      className="flex max-w-xs flex-1 items-center justify-center rounded-md border border-transparent bg-indigo-600 px-8 py-3 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-gray-50 sm:w-full"
+                      onClick={() => handleAddToCart(product.databaseId)}
+                    >
+                      Add to Order
+                    </button>
+                  )}
+                  {isProductInCart(product.databaseId) && (
+                    <button
+                      className="flex max-w-xs flex-1 items-center justify-center rounded-md border border-transparent bg-red-600 px-8 py-3 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-gray-50 sm:w-full"
+                      onClick={() => handleRemoveCartItem(product.databaseId)}
+                    >
+                      Remove from Cart
+                    </button>
+                  )}
                 </div>
+
+                <button
+                  type="button"
+                  className="ml-4 flex items-center justify-center rounded-md px-3 py-3 text-gray-400 hover:bg-gray-100 hover:text-gray-500"
+                >
+                  <HeartIcon aria-hidden="true" className="size-6 shrink-0" />
+                  <span className="sr-only">Add to favorites</span>
+                </button>
+                {/* </div> */}
               </form>
 
               <section aria-labelledby="details-heading" className="mt-12">
@@ -342,6 +359,7 @@ const SingleProduct = ({ singleProduct: product }: Props) => {
             </div>
           </div>
 
+          {/* Related Products */}
           <section
             aria-labelledby="related-heading"
             className="mt-10 border-t border-gray-200 px-4 py-16 sm:px-0"
@@ -358,11 +376,6 @@ const SingleProduct = ({ singleProduct: product }: Props) => {
                 <div key={product.id}>
                   <div className="relative">
                     <div className="relative h-72 w-full overflow-hidden rounded-lg">
-                      {/* <img
-                        alt={product.name}
-                        src={product.featuredImage?.node.sourceUrl}
-                        className="size-full object-cover"
-                      /> */}
                       <Image
                         alt={product.name}
                         src={
@@ -413,4 +426,4 @@ const SingleProduct = ({ singleProduct: product }: Props) => {
   );
 };
 
-export default SingleProduct;
+export default SingleProductContent;

@@ -187,43 +187,10 @@ export const fetchProductById = async (id: number) => {
 
 import { GRAPHQL_QUERY_GET_SINGLE_PRODUCT_BY_SLUG } from "@/graphql/queries/products/getProductBySlug";
 
-const fetchWithRetryAndTimeout = async (
-  url: string,
-  options: RequestInit,
-  retries = 3,
-  timeout = 5000
-): Promise<any> => {
-  for (let attempt = 0; attempt < retries; attempt++) {
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), timeout);
-
-    try {
-      const response = await fetch(url, {
-        ...options,
-        signal: controller.signal,
-      });
-      clearTimeout(timeoutId); // Clear timeout once fetch succeeds
-      if (!response.ok) {
-        throw new Error(`Fetch failed with status: ${response.status}`);
-      }
-      return response.json(); // Parse the response
-    } catch (error) {
-      clearTimeout(timeoutId); // Ensure timeout is cleared
-      console.error(`Fetch attempt ${attempt + 1} failed:`, error);
-
-      if (attempt === retries - 1) {
-        throw error; // Throw error after final attempt
-      }
-
-      await new Promise((resolve) => setTimeout(resolve, 1000)); // Delay before retry
-    }
-  }
-};
-
 export const fetchProductBySlug = async (
   slug: string
 ): Promise<ProductSingle> => {
-  const response = await fetchWithRetryAndTimeout(WORDPRESS_API_URL as string, {
+  const response = await fetch(WORDPRESS_API_URL as string, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -232,19 +199,28 @@ export const fetchProductBySlug = async (
       query: GRAPHQL_QUERY_GET_SINGLE_PRODUCT_BY_SLUG,
       variables: { slug },
     }),
+    next: {
+      revalidate: 60, // Revalidate the cached data every 60 seconds
+    },
   });
 
-  const product = response?.data?.product;
+  if (!response.ok) {
+    throw new Error(`Failed to fetch product by slug: ${response.statusText}`);
+  }
+
+  const result = await response.json();
+
+  const product = result?.data?.product;
 
   if (!product) {
     throw new Error("Product not found");
   }
 
-  // Return processed product with flattened structures
+  // return product as ProductSingle;
   return {
     ...product,
-    galleryImages: product.galleryImages?.nodes || [], // Flatten galleryImages
-    related: product.related?.nodes || [], // Flatten related products
+    galleryImages: product.galleryImages?.nodes || [],
+    related: product.related.nodes || [],
   } as ProductSingle;
 };
 

@@ -31,6 +31,7 @@ export const GRAPHQL_QUERY_GET_SINGLE_PRODUCT_BY_SLUG = `
  query GetSingleProductBySlug($slug: ID!) {
   product(id: $slug, idType: SLUG) {
     id
+    databaseId
     name
     slug
     sku
@@ -54,6 +55,7 @@ export const GRAPHQL_QUERY_GET_SINGLE_PRODUCT_BY_SLUG = `
     attributes {
       nodes {
         name
+        options
       }
     }
     galleryImages {
